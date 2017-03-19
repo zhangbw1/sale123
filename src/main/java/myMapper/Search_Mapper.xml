@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="myMapper.Search_Mapper">
+
+    <select id="select_object_sku_by_shp_id_sku_id" parameterType="Map"
+		resultMap="select_object_sku_by_shp_id_sku_id_map">
+		select a.*,a.Id as sku_id ,b.*,b.Id as product_id ,c.*,e.shxm_mch as
+		attr_name,
+		CONCAT(f.shxzh,f.shxzh_mch) as value_name,
+		b.shp_msh,b.shp_tp as shp_tp_url
+		from t_mall_sku a,
+		t_mall_product b ,
+		t_mall_product_image c,
+		t_mall_sku_attr_value d ,
+		t_mall_attr e,
+		t_mall_value f
+		where
+		a.shp_id =b.Id 
+		and b.Id =c.shp_id
+		and a.Id =d.sku_id
+		and d.shxm_id = e.Id
+		and d.shxzh_id = f.Id
+
+		<if test="shp_id!=null and shp_id!=''">
+			and b.Id = #{shp_id}
+		</if>
+
+		<if test="sku_id!=null and sku_id!=0">
+			and a.Id = #{sku_id}
+		</if>
+	</select>
+
+
+	<resultMap type="myEntity.OBJECT_T_MALL_SKU" id="select_object_sku_by_shp_id_sku_id_map"
+		autoMapping="true">
+		<result column="sku_id" property="sku_id" />
+
+		<collection property="list_img" autoMapping="true"
+			ofType="myEntity.T_MALL_PRODUCT_IMAGE">
+		</collection>
+		<collection property="list_o_a_v_n" ofType="myEntity.OBJECT_ATTR_VALUE_NAME"
+			autoMapping="true">
+		</collection>
+	</resultMap>
+
+	<select id="select_sku_by_flbh2_attr_value" parameterType="Map"
+		resultMap="select_sku_by_flbh2_attr_value_map">
+		select b.*,c.*,a.*,d.*,
+		c.id as productid,
+		b.id as sku_id,
+		d.Id as tm_id,
+		a.Id as sku_attr_value_id,
+		c.shp_tp as shp_tp_url from
+		t_mall_sku_attr_value a ,
+		t_mall_sku b,
+		t_mall_product c ,
+		t_mall_trade_mark d
+		where a.sku_id = b.Id and b.shp_id = c.Id and
+		c.flbh2 = #{flbh2} and c.pp_id = d.id
+		${sql}
+		${order_by}
+		
+
+		<!-- ( select sku_0.sku_id from (select sku_id from t_mall_sku_attr_value 
+			where shxm_id =4 and shxzh_id=5) sku_0 , (select sku_id from t_mall_sku_attr_value 
+			where shxm_id =7 and shxzh_id=14) sku_1 where sku_1.sku_id=sku_0.sku_id ) -->
+
+	</select>
+	<resultMap autoMapping="true" type="myEntity.OBJECT_T_MALL_SKU"
+		id="select_sku_by_flbh2_attr_value_map">
+		<result column="sku_id" property="sku_id" />
+		<result column="shp_tp_url" property="shp_tp_url" />
+		<association property="product" javaType="myEntity.T_MALL_PRODUCT"
+			autoMapping="true">
+			<result column="productid" property="id" />
+		</association>
+		<association property="tm" javaType="myEntity.T_MALL_TRADE_MARK"
+			autoMapping="true">
+			<result column="tm_id" property="id" />
+		</association>
+		<collection property="list_attr_value" ofType="myEntity.T_MALL_SKU_ATTR_VALUE"
+			autoMapping="true">
+			<result column="sku_attr_value_id" property="id" />
+		</collection>
+	</resultMap>
+
+	<select id="select_attr_value_by_flbh2" parameterType="int"
+		resultMap="select_attr_value_by_flbh2_map">
+		select
+		a.*,b.*,c.*,a.Id as attr_id,b.Id as value_id
+		,c.Id as
+		attr_value_id
+		from
+		t_mall_attr a ,
+		t_mall_value b,
+		t_mall_sku_attr_value c
+		where a.Id =b.shxm_id
+		and c.shxm_id = a.Id
+		and c.shxzh_id = b.Id
+		and a.flbh2 =#{flbh2}
+	</select>
+
+	<resultMap type="myEntity.T_MALL_ATTR" id="select_attr_value_by_flbh2_map"
+		autoMapping="true">
+		<result column="attr_id" property="id" />
+		<collection property="lvalue" ofType="myEntity.T_MALL_VALUE"
+			autoMapping="true">
+			<result column="value_id" property="id" />
+		</collection>
+	</resultMap>
+
+	<select id="select_sku_by_flbh2" parameterType="int"
+		resultMap="select_sku_by_flbh2_map">
+		select a.*,b.*,a.id as sku_id ,b.id as product_id from
+		t_mall_sku a,
+		t_mall_product b
+		where a.shp_id = b.Id
+		and b.flbh2 = #{flbh2}
+	</select>
+
+	<resultMap type="myEntity.T_MALL_SKU" id="select_sku_by_flbh2_map"
+		autoMapping="true">
+		<result column="sku_id" property="id" />
+		<association property="product" javaType="myEntity.T_MALL_PRODUCT"
+			autoMapping="true">
+			<result column="product_id" property="id" />
+		</association>
+	</resultMap>
+
+</mapper>
+
+
+
+

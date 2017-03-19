@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="myMapper.Order_Mapper">
+    
+    <insert id="insert_order" parameterType="myEntity.OBJECT_T_MALL_ORDER"
+		useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		insert into
+		t_mall_order(
+		shp_mch,
+		sku_shl,
+		shhr,
+		zje,
+		jdh,
+		yh_id,
+		shp_id,
+		sku_id,
+		shp_tp,
+		gwch_id,
+		dzh_id)
+		values
+		(#{shp_mch},#{sku_shl},#{shhr},
+		#{zje},#{jdh},#{yh_id},
+		#{shp_id},#{sku_id},#{shp_tp},
+		#{gwch_id},#{dzh_id})
+	</insert>
+    <insert id="insert_orders" parameterType="List" useGeneratedKeys="true" 
+               keyColumn="id" keyProperty="id">
+          insert into t_mall_order(
+          shp_mch,
+		  sku_shl,
+		  shhr,
+			zje,
+			jdh,
+			yh_id,
+			shp_id,
+			sku_id,
+			shp_tp,
+			gwch_id,
+			dzh_id)
+          values 
+          <foreach collection="list" item="object_order" separator=",">
+                (#{object_order.shp_mch},#{object_order.sku_shl},#{object_order.shhr},
+					#{object_order.zje},#{object_order.jdh},#{object_order.yh_id},
+					#{object_order.shp_id},#{object_order.sku_id},#{object_order.shp_tp},
+					#{object_order.gwch_id},#{object_order.dzh_id})
+          </foreach>
+    </insert>
+  
+
+    <insert id="insert_flows" parameterType="List" 
+            useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        
+        insert into t_mall_flow (
+           psfsh,
+		   psmsh,
+		   yh_id,
+		   dd_id,
+		   mdd
+        )values
+          <foreach collection="list" separator="," item="flow" >
+              (#{flow.psfsh},#{flow.psmsh},#{flow.yh_id},
+			   #{flow.dd_id},#{flow.mdd})
+          </foreach>
+    </insert>
+    
+    <update id="update_orders_by_dd_id" parameterType="list">
+       update t_mall_order set jdh = 2
+       where id in (
+		<foreach collection="list" item="order" separator=",">
+			#{order.id}
+		</foreach>
+		)
+    </update>
+    
+    <insert id="insert_flows_pay" parameterType="list">
+        insert into t_mall_flow (
+            psfsh,
+			psshj,
+			psmsh,
+			yh_id,
+			dd_id,
+			mqdd,
+			mdd,
+			ywy,
+			lxfsh)
+		values
+		<foreach collection="list" item="flow" separator=",">
+		    (#{flow.psfsh},#{flow.psshj},#{flow.psmsh},#{flow.yh_id},
+			#{flow.dd_id},#{flow.mqdd},#{flow.mdd},#{flow.ywy},#{flow.lxfsh})
+		</foreach>   
+    </insert>
+    
+    <update id="update_kc_by_sku_id" parameterType="myEntity.OBJECT_T_MALL_ORDER">
+          update  t_mall_sku a set a.kc = kc-#{sku_shl} where a.id = #{sku_id}  
+    </update>
+    
+</mapper>

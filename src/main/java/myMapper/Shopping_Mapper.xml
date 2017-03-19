@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="myMapper.Shopping_Mapper">
+
+	<insert id="insert_car" parameterType="myEntity.T_MALL_SHOPPINGCAR"
+		useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		insert into
+		T_MALL_SHOPPINGCAR
+		(sku_mch,sku_jg,tjshl,hj,yh_id,shp_id,sku_id,shp_tp)
+		values(#{sku_mch},#{sku_jg},1,#{sku_jg},#{yh_id},#{shp_id},#{sku_id},#{shp_tp})
+	</insert>
+
+	<update id="update_car" parameterType="myEntity.T_MALL_SHOPPINGCAR">
+		update T_MALL_SHOPPINGCAR
+		<set>
+			<if test="tjshl!=0">
+				tjshl = #{tjshl},
+				hj = #{tjshl}*sku_jg,
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+
+
+	<select id="select_car_list_by_user" parameterType="int"
+		resultType="myEntity.T_MALL_SHOPPINGCAR">
+		select * from T_MALL_SHOPPINGCAR where yh_id = #{id}
+	</select>
+
+    <delete id="delete_shoppingCar_by_car_id" parameterType="List">
+        delete from T_MALL_SHOPPINGCAR where id in()
+        <foreach collection="list" item="id" separator=",">
+              #{id}
+        </foreach>)
+        
+      
+    </delete>
+</mapper>
